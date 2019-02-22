@@ -366,6 +366,7 @@ scpi_free_responses(struct scpi_response* start)
 		prev = start;
 		start = start->next;
 		
+		free((void*)prev->str);
 		free((void*)prev);
 	}
 }
