@@ -33,9 +33,10 @@ SOFTWARE.
 
 typedef enum scpi_error_codes
 {
-	SCPI_SUCCESS			=  0,
-	SCPI_COMMAND_NOT_FOUND	= -1,
-	SCPI_NO_CALLBACK		= -2
+	SCPI_SUCCESS				=  0,
+	SCPI_COMMAND_NOT_FOUND		= -1,
+	SCPI_NO_CALLBACK			= -2,
+	SCPI_CALLBACK_EXEC_ERROR	= -3
 } scpi_error_t;
 
 typedef enum scpi_command_location
@@ -49,7 +50,7 @@ struct scpi_parser_context;
 struct scpi_command;
 struct scpi_error;
 
-typedef scpi_error_t(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
+typedef (struct scpi_response*)(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
 
 struct scpi_token
 {
@@ -98,10 +99,17 @@ struct scpi_numeric
 	size_t length;
 };
 
+struct scpi_response
+{
+	char* str;
+	size_t length;
+	scpi_error_t* error_code;
+};
+
 /**
- * Initialise an SCPI parser.
+ * Initialize an SCPI parser.
  *
- * @param ctx	A pointer to the struct scpi_parser_context to initialise.
+ * @param ctx	A pointer to the struct scpi_parser_context to initialize.
  */
 void
 scpi_init(struct scpi_parser_context* ctx);
