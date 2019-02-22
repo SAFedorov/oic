@@ -36,7 +36,8 @@ typedef enum scpi_error_codes
 	SCPI_SUCCESS				=  0,
 	SCPI_COMMAND_NOT_FOUND		= -1,
 	SCPI_NO_CALLBACK			= -2,
-	SCPI_CALLBACK_EXEC_ERROR	= -3
+	SCPI_CALLBACK_EXEC_ERROR	= -3,
+	SCPI_NO_CALLBACK_RESPONSE	= -4
 } scpi_error_t;
 
 typedef enum scpi_command_location

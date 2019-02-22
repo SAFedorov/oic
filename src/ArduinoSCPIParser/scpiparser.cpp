@@ -278,47 +278,70 @@ scpi_find_command(struct scpi_parser_context* ctx,
 	return NULL;
 }
 
+static struct scpi_response*
+get_empty_response()
+{
+	struct scpi_response* response;
+	
+	response = (struct scpi_response*)malloc(sizeof(struct scpi_response));
+	response->error_code = SCPI_SUCCESS;
+	response->next = NULL;
+	response->str = NULL;
+	response->length = 0;
+}
+
 struct scpi_response*
 scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size_t length)
 {
 	struct scpi_command* command;
 	struct scpi_token* parsed_command;
+	struct scpi_response* response;
 	
 	parsed_command = scpi_parse_string(command_string, length);
 	
 	command = scpi_find_command(ctx, parsed_command);
 	if(command == NULL)
 	{
-		return SCPI_COMMAND_NOT_FOUND;
+		response = get_empty_response();
+		response->error_code = SCPI_COMMAND_NOT_FOUND;
 	}
-	
-	if(command->callback == NULL)
+	else if(command->callback == NULL)
 	{
-		return SCPI_NO_CALLBACK;
+		response = get_empty_response();
+		response->error_code = SCPI_NO_CALLBACK;
+	}
+	else
+	{
+		response = command->callback(ctx, parsed_command);	
 	}
 	
+	if(response == NULL)
+	{
+		response = get_empty_response();
+		response->error_code = SCPI_NO_CALLBACK_RESPONSE;
+	}
 	
-	return command->callback(ctx, parsed_command);
+	return response;
 }
 
 struct scpi_response*
 scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length)
 {
 	int i;
-	int cmd_start;
+	int start_ind;
 	struct scpi_response* head;
 	struct scpi_response* tail;
 	struct scpi_response* new_tail;
 
 	head = NULL;	
 
-	cmd_start = 0;
+	start_ind = 0;
 	// split the command string by ';' and execute every command
 	for(i = 0; i < length; i++)
 	{
 		if(command_string[i] == ';' || i == length-1)
 		{
-			new_tail = scpi_execute_command(ctx, &command_string[cmd_start], i-cmd_start);
+			new_tail = scpi_execute_command(ctx, &command_string[start_ind], i-start_ind);
 
 			if(head == NULL)
 			{
@@ -330,8 +353,9 @@ scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t lengt
 				tail->next = new_tail;
 				tail = tail->next;
 			}
-
-			cmd_start = i+1;
+			
+			tail->next=NULL;
+			start_ind = i+1;
 		}
 	}
 

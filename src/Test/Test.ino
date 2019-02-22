@@ -55,6 +55,7 @@ void loop()
 {
   char line_buffer[COM_BUFF_SIZE];
   unsigned char read_length;
+  struct scpi_response* response;
 
   while(1)
   {
@@ -62,7 +63,8 @@ void loop()
     read_length = Serial1.readBytesUntil(COM_TERMINATOR, line_buffer, COM_BUFF_SIZE);
     if(read_length > 0)
     {
-      scpi_execute_command(&ctx, line_buffer, read_length);
+      response = scpi_execute(&ctx, &line_buffer, read_length);
+      scpi_free_responses(response)
     }
   }
 }
