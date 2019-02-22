@@ -39,15 +39,21 @@ SOFTWARE.
 static struct scpi_response*
 system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 {
-	struct scpi_error* error = scpi_pop_error(ctx);
-	
-	Serial.print(error->id);
-        Serial.print(",\"");
-        Serial.write((const uint8_t*)error->description, error->length);
-	Serial.println("\"");
+	struct scpi_error* error;
+	struct scpi_response* response;
+
+	response = (struct scpi_response*)malloc(sizeof(struct scpi_response));
+	response->error_code = SCPI_SUCCESS;
+	response->next = NULL;
+
+	error = scpi_pop_error(ctx);
+	response->str = error->description;
+	response->length = error->length;
 
 	scpi_free_tokens(command);
-	return SCPI_SUCCESS;
+	free((void*)error);
+
+	return response;
 }
 
 void

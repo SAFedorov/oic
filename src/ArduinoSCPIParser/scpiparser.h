@@ -104,7 +104,7 @@ struct scpi_response
 {
 	char* str;
 	size_t length;
-	scpi_error_t* error_code;
+	scpi_error_t error_code;
 
 	struct scpi_response* next;
 };
