@@ -11,8 +11,8 @@ struct scpi_parser_context ctx;
 
 
 // Function prototypes
-scpi_error_t identify(struct scpi_parser_context* context, struct scpi_token* command);
-scpi_error_t get_pressure(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command);
 
 
 void setup()
@@ -56,6 +56,7 @@ void loop()
   char line_buffer[COM_BUFF_SIZE];
   unsigned char read_length;
   struct scpi_response* response;
+  struct scpi_response* tmp_response;
 
   while(1)
   {
@@ -63,8 +64,25 @@ void loop()
     read_length = Serial1.readBytesUntil(COM_TERMINATOR, line_buffer, COM_BUFF_SIZE);
     if(read_length > 0)
     {
-      response = scpi_execute(&ctx, &line_buffer, read_length);
-      scpi_free_responses(response)
+      response = scpi_execute(&ctx, line_buffer, read_length);
+
+      /* Print response string to the serial port*/
+      tmp_response = response;
+      while(tmp_response != NULL)
+      {
+        Serial1.write((const uint8_t*)tmp_response->str, tmp_response->length);
+        if(tmp_response->next == NULL)
+        {
+          Serial1.print(';');
+        }
+        else
+        {
+          Serial1.print(COM_TERMINATOR);
+        }
+        tmp_response = tmp_response->next;
+      }
+      
+      scpi_free_responses(response);
     }
   }
 }
@@ -73,23 +91,31 @@ void loop()
 /*
  * Respond to *IDN?
  */
-scpi_error_t identify(struct scpi_parser_context* context, struct scpi_token* command)
+struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_token* command)
 {
+  struct scpi_response* resp;
+  
   scpi_free_tokens(command);
 
-  Serial1.println("OIC,Test IDN");
-  return SCPI_SUCCESS;
+  resp = get_empty_response();
+  resp->str = "IDN response";
+  resp->length = 12;
+  
+  return resp;
 }
 
 /*
  * Respond to PRESSURE?
  */
-scpi_error_t get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
+struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
-
-  Serial1.print("get_pressure ");
-  Serial1.println(110.123, 2);
-
+  struct scpi_response* resp;
+  
   scpi_free_tokens(command);
-  return SCPI_SUCCESS;
+
+  resp = get_empty_response();
+  resp->str = "PRESSURE response";
+  resp->length = 12;
+  
+  return resp;
 }

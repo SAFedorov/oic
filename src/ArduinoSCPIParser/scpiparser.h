@@ -52,7 +52,7 @@ struct scpi_command;
 struct scpi_error;
 struct scpi_response;
 
-typedef (struct scpi_response*)(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
+typedef struct scpi_response*(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
 
 struct scpi_token
 {
@@ -206,7 +206,16 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
  *
  */
 struct scpi_response*
-scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length)
+scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length);
+
+/**
+ * Allocate an empty response structure, initializing
+ * all the pointers to NULL and the length to 0.
+ *
+ *
+ */
+struct scpi_response*
+get_empty_response();
 
 
 /**
@@ -233,7 +242,7 @@ scpi_free_some_tokens(struct scpi_token* start, struct scpi_token* end);
  * @param start	The response list to be freed.
  */
 void
-scpi_free_responses(struct scpi_response* start)
+scpi_free_responses(struct scpi_response* start);
 
 /**
  * Parse a numeric string.

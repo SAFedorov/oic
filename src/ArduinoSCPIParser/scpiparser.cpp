@@ -26,7 +26,6 @@ SOFTWARE.
 #include <ctype.h>
 
 #include <Arduino.h>
-#include <WProgram.h>
 
 #include "scpiparser.h"
 
@@ -278,7 +277,7 @@ scpi_find_command(struct scpi_parser_context* ctx,
 	return NULL;
 }
 
-static struct scpi_response*
+struct scpi_response*
 get_empty_response()
 {
 	struct scpi_response* response;
@@ -359,7 +358,7 @@ scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t lengt
 		}
 	}
 
-	return head
+	return head;
 }
 
 void
