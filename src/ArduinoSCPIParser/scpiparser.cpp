@@ -272,7 +272,7 @@ scpi_find_command(struct scpi_parser_context* ctx,
 	return NULL;
 }
 
-scpi_error_t
+struct scpi_response*
 scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size_t length)
 {
 	struct scpi_command* command;
@@ -293,6 +293,43 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	
 	
 	return command->callback(ctx, parsed_command);
+}
+
+struct scpi_response*
+scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length)
+{
+	int i;
+	int cmd_start;
+	struct scpi_response* head;
+	struct scpi_response* tail;
+	struct scpi_response* new_tail;
+
+	head = NULL;	
+
+	cmd_start = 0;
+	// split the command string by ';' and execute every command
+	for(i = 0; i < length; i++)
+	{
+		if(command_string[i] == ';' || i == length-1)
+		{
+			new_tail = scpi_execute_command(ctx, &command_string[cmd_start], i-cmd_start);
+
+			if(head == NULL)
+			{
+				head = new_tail;
+				tail = head;
+			}
+			else
+			{
+				tail->next = new_tail;
+				tail = tail->next;
+			}
+
+			cmd_start = i+1;
+		}
+	}
+
+	return head
 }
 
 void

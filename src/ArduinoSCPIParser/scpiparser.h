@@ -49,6 +49,7 @@ struct scpi_token;
 struct scpi_parser_context;
 struct scpi_command;
 struct scpi_error;
+struct scpi_response;
 
 typedef (struct scpi_response*)(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
 
@@ -104,6 +105,8 @@ struct scpi_response
 	char* str;
 	size_t length;
 	scpi_error_t* error_code;
+
+	struct scpi_response* next;
 };
 
 /**
@@ -181,7 +184,7 @@ scpi_find_command(struct scpi_parser_context* ctx,
 
 					
 /**
- * Execute an SCPI command string.
+ * Execute a single SCPI command given as string.
  *
  * @param ctx				The SCPI parser context.
  * @param command_string	The command to be executed.
@@ -189,8 +192,21 @@ scpi_find_command(struct scpi_parser_context* ctx,
  *
  * @return An error code.
  */
-scpi_error_t
+struct scpi_response*
 scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size_t length);
+
+
+/**
+ * Execute a set of SCPI commands given as string.
+ *
+ * @param ctx				The SCPI parser context.
+ * @param command_string	String, containing commands separated by ';'.
+ * @param length			The length of the string.
+ *
+ */
+struct scpi_response*
+scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length)
+
 
 /**
  * Free a token list.
@@ -255,3 +271,4 @@ scpi_pop_error(struct scpi_parser_context* ctx);
 #endif
 
 #endif
+
