@@ -225,6 +225,15 @@ scpi_free_tokens(struct scpi_token* start);
 void
 scpi_free_some_tokens(struct scpi_token* start, struct scpi_token* end);
 
+
+/**
+ * Free a response list.
+ *
+ * @param start	The response list to be freed.
+ */
+void
+scpi_free_responses(struct scpi_response* start)
+
 /**
  * Parse a numeric string.
  *

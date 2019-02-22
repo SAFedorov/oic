@@ -36,7 +36,7 @@ SOFTWARE.
   
 #endif
 
-static scpi_error_t
+static struct scpi_response*
 system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 {
 	struct scpi_error* error = scpi_pop_error(ctx);
@@ -349,6 +349,19 @@ void
 scpi_free_tokens(struct scpi_token* start)
 {
 	scpi_free_some_tokens(start, NULL);
+}
+
+void
+scpi_free_responses(struct scpi_response* start)
+{
+	struct scpi_response* prev;
+	while(start != NULL)
+	{
+		prev = start;
+		start = start->next;
+		
+		free((void*)prev);
+	}
 }
 
 struct scpi_numeric
