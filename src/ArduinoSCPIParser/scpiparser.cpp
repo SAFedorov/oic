@@ -287,6 +287,8 @@ get_empty_response()
 	response->next = NULL;
 	response->str = NULL;
 	response->length = 0;
+	
+	return response;
 }
 
 struct scpi_response*
@@ -299,6 +301,7 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	parsed_command = scpi_parse_string(command_string, length);
 	
 	command = scpi_find_command(ctx, parsed_command);
+	response = NULL;
 	if(command == NULL)
 	{
 		response = get_empty_response();
@@ -328,11 +331,12 @@ scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t lengt
 {
 	int i;
 	int start_ind;
+	int cmd_length;
 	struct scpi_response* head;
 	struct scpi_response* tail;
 	struct scpi_response* new_tail;
 
-	head = NULL;	
+	head = NULL;
 
 	start_ind = 0;
 	// split the command string by ';' and execute every command
@@ -340,7 +344,19 @@ scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t lengt
 	{
 		if(command_string[i] == ';' || i == length-1)
 		{
-			new_tail = scpi_execute_command(ctx, &command_string[start_ind], i-start_ind);
+			if(i == length-1)
+			{
+				/*including the current character*/
+				cmd_length = i-start_ind+1;
+			}
+			else
+			{
+				/*excluding the current character, which is ';'*/
+				cmd_length = i-start_ind;
+			}
+			
+			
+			new_tail = scpi_execute_command(ctx, &command_string[start_ind], cmd_length);
 
 			if(head == NULL)
 			{

@@ -58,6 +58,9 @@ void loop()
   struct scpi_response* response;
   struct scpi_response* tmp_response;
 
+  /*debug*/
+  int debug_cnt;
+
   while(1)
   {
     /* Read in a line and execute it. */
@@ -66,12 +69,26 @@ void loop()
     {
       response = scpi_execute(&ctx, line_buffer, read_length);
 
+      /*debug
+      Serial1.print("scpi_execute finished--");
+      tmp_response = response;
+      debug_cnt=0;
+      while(tmp_response != NULL)
+      {
+        debug_cnt++;
+        tmp_response = tmp_response->next;
+      }
+      Serial1.print("responses received:--");
+      Serial1.print(debug_cnt);
+      Serial1.print("--");
+      end debug*/
+
       /* Print response string to the serial port*/
       tmp_response = response;
       while(tmp_response != NULL)
       {
         Serial1.write((const uint8_t*)tmp_response->str, tmp_response->length);
-        if(tmp_response->next == NULL)
+        if(tmp_response->next != NULL)
         {
           Serial1.print(';');
         }
@@ -94,12 +111,14 @@ void loop()
 struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
+  char resp_str[13] = "IDN response";
   
   scpi_free_tokens(command);
 
   resp = get_empty_response();
-  resp->str = "IDN response";
-  resp->length = 12;
+  resp->str = (char *)malloc(sizeof(resp_str));
+  strcpy(resp->str, resp_str);
+  resp->length = sizeof(resp_str)/sizeof(char);
   
   return resp;
 }
@@ -110,12 +129,14 @@ struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_
 struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
+  char resp_str[18] = "PRESSURE response";
   
   scpi_free_tokens(command);
 
   resp = get_empty_response();
-  resp->str = "PRESSURE response";
-  resp->length = 12;
+  resp->str = (char *)malloc(sizeof(resp_str));
+  strcpy(resp->str, resp_str);
+  resp->length = sizeof(resp_str)/sizeof(char);
   
   return resp;
 }
