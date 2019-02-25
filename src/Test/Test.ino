@@ -14,6 +14,23 @@ struct scpi_parser_context ctx;
 struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_token* command);
 struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command);
 
+struct scpi_response* get_valve1(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_valve2(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_valve3(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_valve4(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_valve5(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_valve7(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_cooler(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* get_recirculator(struct scpi_parser_context* context, struct scpi_token* command);
+
+struct scpi_response* set_valve1(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_valve2(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_valve3(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_valve4(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_valve5(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_valve7(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_cooler(struct scpi_parser_context* context, struct scpi_token* command);
+struct scpi_response* set_recirculator(struct scpi_parser_context* context, struct scpi_token* command);
 
 void setup()
 {
@@ -70,15 +87,6 @@ void loop()
 
       /*debug
       Serial1.print("scpi_execute finished--");
-      tmp_response = response;
-      debug_cnt=0;
-      while(tmp_response != NULL)
-      {
-        debug_cnt++;
-        tmp_response = tmp_response->next;
-      }
-      Serial1.print("responses received:--");
-      Serial1.print(debug_cnt);
       Serial1.print("--");
       end debug*/
 
@@ -138,7 +146,7 @@ struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_
 }
 
 /*
- * Respond to PRESSURE?
+ * Respond to :PRESSURE?
  */
 struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
@@ -154,3 +162,7 @@ struct scpi_response* get_pressure(struct scpi_parser_context* context, struct s
   
   return resp;
 }
+
+/*
+ * Respond to VALVE?
+ */
