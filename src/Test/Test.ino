@@ -32,21 +32,21 @@ void setup()
   */
   scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "*IDN?", 5, "*IDN?", 5, identify);
 
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE1?", 7, "VALVE1?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE2?", 7, "VALVE2?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE3?", 7, "VALVE3?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE4?", 7, "VALVE4?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE5?", 7, "VALVE5?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE6?", 7, "VALVE6?", 7, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "VALVE7?", 7, "VALVE7?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE1?", 7, "VALVE1?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE2?", 7, "VALVE2?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE3?", 7, "VALVE3?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE4?", 7, "VALVE4?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE5?", 7, "VALVE5?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE6?", 7, "VALVE6?", 7, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE7?", 7, "VALVE7?", 7, NULL);
   
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "RECIRCULATOR?", 13, "REC?", 4, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "RECIRCULATOR", 12, "REC", 3, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "RECIRCULATOR?", 13, "REC?", 4, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "RECIRCULATOR", 12, "REC", 3, NULL);
   
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "COOLER?", 7, "COOL?", 5, NULL);
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "COOLER", 6, "COOL", 4, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "COOLER?", 7, "COOL?", 5, NULL);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "COOLER", 6, "COOL", 4, NULL);
 
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "PRESSURE?", 9, "PRES?", 5, get_pressure);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "PRESSURE?", 9, "PRES?", 5, get_pressure);
 
   Serial1.begin(COM_BAUD_RATE);
 }

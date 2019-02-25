@@ -51,12 +51,6 @@ system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 
 	scpi_free_tokens(command);
 	free((void*)error);
-	
-	/*debug*/
-	Serial1.print("-system_error:");
-	Serial1.write((const uint8_t*)response->str, response->length);
-	Serial1.print("-");
-	/*end debug*/
 
 	return response;
 }
@@ -116,15 +110,6 @@ scpi_parse_string(char* str, size_t length)
 	
 	for(i = 0; i < length; i++)
 	{
-		/*debug
-		if(i == 0 && str[i] == ':')
-		{
-			 Optionally skip the root ':' 
-			token_start = i+1;
-			continue;
-		}
-		*/
-		
 		if(str[i] == ':' || str[i] == ' ' || i == length-1)
 		{
 			if(i == length-1)
@@ -143,17 +128,6 @@ scpi_parse_string(char* str, size_t length)
 			new_tail->value = str+token_start;
 			new_tail->length = token_length;
 			new_tail->next = NULL;
-			
-			/*debug*/
-			Serial1.print("-scpi_parse_string-token-");
-			Serial1.write((const uint8_t*)new_tail->value, new_tail->length);
-			Serial1.print("-");
-			/*end debug*/
-			
-			if(i == length-1)
-			{
-				new_tail->length++;
-			}
 						
 			if(tail == NULL)
 			{
@@ -278,12 +252,6 @@ scpi_find_command(struct scpi_parser_context* ctx,
 				|| (current_token->length == current_command->short_name_length
 					&& !memcmp(current_token->value, current_command->short_name, current_token->length)))
 			{
-				/*debug*/
-				Serial1.print("-scpi_find_command-matched-");
-				Serial1.write((const uint8_t*)current_token->value, current_token->length);
-				Serial1.print("-");
-				/*end debug*/
-				
 				/* We have found the token. */
 				current_token = current_token->next;
 				
@@ -342,19 +310,11 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	{
 		response = get_empty_response();
 		response->error_code = SCPI_COMMAND_NOT_FOUND;
-		
-		/*debug*/
-		Serial1.print("-scpi_execute_command-command not found-");
-		/*end debug*/
 	}
 	else if(command->callback == NULL)
 	{
 		response = get_empty_response();
 		response->error_code = SCPI_NO_CALLBACK;
-		
-		/*debug*/
-		Serial1.print("-scpi_execute_command-no callback-");
-		/*end debug*/
 	}
 	else
 	{
@@ -365,10 +325,6 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	{
 		response = get_empty_response();
 		response->error_code = SCPI_NO_CALLBACK_RESPONSE;
-		
-		/*debug*/
-		Serial1.print("-scpi_execute_command-SCPI_NO_CALLBACK_RESPONSE-");
-		/*end debug*/
 	}
 	
 	return response;
