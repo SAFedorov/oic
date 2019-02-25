@@ -58,8 +58,7 @@ void loop()
   struct scpi_response* response;
   struct scpi_response* tmp_response;
 
-  /*debug*/
-  int debug_cnt;
+  int resp_cnt;
 
   while(1)
   {
@@ -83,20 +82,35 @@ void loop()
       Serial1.print("--");
       end debug*/
 
-      /* Print response string to the serial port*/
+      /* Count non-empty responses*/
       tmp_response = response;
+      resp_cnt=0;
       while(tmp_response != NULL)
       {
-        Serial1.write((const uint8_t*)tmp_response->str, tmp_response->length);
-        if(tmp_response->next != NULL)
+        if(tmp_response->length>0)
         {
-          Serial1.print(';');
-        }
-        else
-        {
-          Serial1.print(COM_TERMINATOR);
+          resp_cnt++;
         }
         tmp_response = tmp_response->next;
+      }
+
+      if(resp_cnt>0)
+      {
+        /* Print response strings to the serial port*/
+        tmp_response = response;
+        while(tmp_response != NULL)
+        {
+          Serial1.write((const uint8_t*)tmp_response->str, tmp_response->length);
+          if(tmp_response->next != NULL)
+          {
+            Serial1.print(';');
+          }
+          else
+          {
+            Serial1.print(COM_TERMINATOR);
+          }
+          tmp_response = tmp_response->next;
+        }
       }
       
       scpi_free_responses(response);
@@ -118,7 +132,7 @@ struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_
   resp = get_empty_response();
   resp->str = (char *)malloc(sizeof(resp_str));
   strcpy(resp->str, resp_str);
-  resp->length = sizeof(resp_str)/sizeof(char);
+  resp->length = sizeof(resp_str)/sizeof(char)-1; // discard the EOS character
   
   return resp;
 }
@@ -136,7 +150,7 @@ struct scpi_response* get_pressure(struct scpi_parser_context* context, struct s
   resp = get_empty_response();
   resp->str = (char *)malloc(sizeof(resp_str));
   strcpy(resp->str, resp_str);
-  resp->length = sizeof(resp_str)/sizeof(char);
+  resp->length = sizeof(resp_str)/sizeof(char)-1; // discard the EOS character
   
   return resp;
 }
