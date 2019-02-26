@@ -42,7 +42,7 @@ system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 	struct scpi_error* error;
 	struct scpi_response* response;
 
-	response = get_empty_response();
+	response = get_empty_response(0);
 	response->error_code = SCPI_SUCCESS;
 
 	error = scpi_pop_error(ctx);
@@ -282,15 +282,24 @@ scpi_find_command(struct scpi_parser_context* ctx,
 }
 
 struct scpi_response*
-get_empty_response()
+get_empty_response(int length)
 {
 	struct scpi_response* response;
 	
 	response = (struct scpi_response*)malloc(sizeof(struct scpi_response));
 	response->error_code = SCPI_SUCCESS;
 	response->next = NULL;
-	response->str = NULL;
-	response->length = 0;
+	
+	if(length == 0)
+	{
+		response->str = NULL;
+		response->length = 0;	
+	}
+	else
+	{
+		response->str = (char *)malloc(length*sizeof(char));
+		response->length = length;
+	}
 	
 	return response;
 }
@@ -308,12 +317,12 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	response = NULL;
 	if(command == NULL)
 	{
-		response = get_empty_response();
+		response = get_empty_response(0);
 		response->error_code = SCPI_COMMAND_NOT_FOUND;
 	}
 	else if(command->callback == NULL)
 	{
-		response = get_empty_response();
+		response = get_empty_response(0);
 		response->error_code = SCPI_NO_CALLBACK;
 	}
 	else
@@ -323,7 +332,7 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 	
 	if(response == NULL)
 	{
-		response = get_empty_response();
+		response = get_empty_response(0);
 		response->error_code = SCPI_NO_CALLBACK_RESPONSE;
 	}
 	

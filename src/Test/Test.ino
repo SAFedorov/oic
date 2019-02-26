@@ -133,14 +133,12 @@ void loop()
 struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
-  char resp_str[13] = "IDN response";
   
   scpi_free_tokens(command);
 
-  resp = get_empty_response();
-  resp->str = (char *)malloc(sizeof(resp_str));
-  strcpy(resp->str, resp_str);
-  resp->length = sizeof(resp_str)/sizeof(char)-1; // discard the EOS character
+  resp = get_empty_response(13);
+  strcpy(resp->str, "IDN response");
+  resp->length--; // discard the EOS character
   
   return resp;
 }
@@ -151,14 +149,12 @@ struct scpi_response* identify(struct scpi_parser_context* context, struct scpi_
 struct scpi_response* get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
-  char resp_str[18] = "PRESSURE response";
   
   scpi_free_tokens(command);
 
-  resp = get_empty_response();
-  resp->str = (char *)malloc(sizeof(resp_str));
-  strcpy(resp->str, resp_str);
-  resp->length = sizeof(resp_str)/sizeof(char)-1; // discard the EOS character
+  resp = get_empty_response(18);
+  strcpy(resp->str, "PRESSURE response");
+  resp->length--; // discard the EOS character
   
   return resp;
 }

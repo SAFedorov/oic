@@ -210,13 +210,13 @@ struct scpi_response*
 scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length);
 
 /**
- * Allocate an empty response structure, initializing
- * all the pointers to NULL and the length to 0.
+ * Allocate an empty response structure.
  *
+ * @param length		The length of the allocated response string.
  *
  */
 struct scpi_response*
-get_empty_response();
+get_empty_response(int length);
 
 
 /**
