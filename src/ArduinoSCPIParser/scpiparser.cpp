@@ -36,6 +36,27 @@ SOFTWARE.
   
 #endif
 
+/* Case-insensitive string comparison over defined length*/
+static int
+strcmpil(char* str1, char* str2, int length)
+{
+	int i;
+	int isequal;
+	
+	isequal = 1;
+	for(i=0; i<length; i++)
+	{
+		if(toupper(str1[i]) != toupper(str2[i]))
+		{
+			isequal = 0;
+			break;
+		}
+	}
+	
+	return isequal;
+}
+
+
 static struct scpi_response*
 system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 {
@@ -248,9 +269,9 @@ scpi_find_command(struct scpi_parser_context* ctx,
 		{
 			
 			if((current_token->length == current_command->long_name_length
-					&& !memcmp(current_token->value, current_command->long_name, current_token->length))
+					&& strcmpil(current_token->value, current_command->long_name, current_token->length))
 				|| (current_token->length == current_command->short_name_length
-					&& !memcmp(current_token->value, current_command->short_name, current_token->length)))
+					&& strcmpil(current_token->value, current_command->short_name, current_token->length)))
 			{
 				/* We have found the token. */
 				current_token = current_token->next;
