@@ -1,9 +1,10 @@
 #include <scpiparser.h>
 #include <Arduino.h>
 
-#define COM_TERMINATOR '\n'
-#define COM_BAUD_RATE 9600
-#define COM_BUFF_SIZE 256
+#define COM_TERMINATOR  '\n'
+#define COM_BAUD_RATE   9600
+#define COM_BUFF_SIZE   256
+#define COM_TIMEOUT     50 // ms
 
 
 // Global variables
@@ -24,15 +25,13 @@ void setup()
   * Set up the command tree. Since there are few commands 
   * 
   *  *IDN?          -> Identify
-  *  :VALVE<i>      -> Valve<i> open/closed
-  *  :RECirculator  -> Recirculator on/off
-  *  :COOLer        -> Cryocooler on/off
   *  :PRESsure?     -> read pressure
   */
   scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "*IDN?", 5, "*IDN?", 5, identify);
 
   scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "PRESSURE?", 9, "PRES?", 5, get_pressure);
 
+  Serial1.setTimeout(COM_TIMEOUT);
   Serial1.begin(COM_BAUD_RATE);
 }
 
@@ -53,12 +52,7 @@ void loop()
     {
       response = scpi_execute(&ctx, line_buffer, read_length);
 
-      /*debug
-      Serial1.print("scpi_execute finished--");
-      Serial1.print("--");
-      end debug*/
-
-      /* Count non-empty responses*/
+      /* Count non-empty responses and send reply if cnt>0*/
       tmp_response = response;
       resp_cnt=0;
       while(tmp_response != NULL)
@@ -119,14 +113,12 @@ struct scpi_response*
 get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
-  int length;
-  float pi = 3.141593;
+  int p = 41;
   
   scpi_free_tokens(command);
 
   resp = get_empty_response(20);
-  length = sprintf(resp->str, "Pressure = %f", pi);
-  resp->length = length; 
+  resp->length = sprintf(resp->str, "Pressure = %i", 41);
   
   return resp;
 }
