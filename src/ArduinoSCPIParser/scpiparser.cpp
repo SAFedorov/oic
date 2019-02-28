@@ -70,7 +70,6 @@ system_error(struct scpi_parser_context* ctx, struct scpi_token* command)
 	response->str = error->description;
 	response->length = error->length;
 
-	scpi_free_tokens(command);
 	free((void*)error);
 
 	return response;
@@ -356,6 +355,8 @@ scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size
 		response = get_empty_response(0);
 		response->error_code = SCPI_NO_CALLBACK_RESPONSE;
 	}
+
+	scpi_free_tokens(parsed_command);
 	
 	return response;
 }

@@ -67,8 +67,6 @@ struct scpi_response*
 identify(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
-  
-  scpi_free_tokens(command);
 
   resp = get_empty_response(13);
   strcpy(resp->str, "IDN response");
@@ -85,8 +83,6 @@ get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
 {
   struct scpi_response* resp;
   int p = 41;
-  
-  scpi_free_tokens(command);
 
   resp = get_empty_response(20);
   resp->length = sprintf(resp->str, "Pressure = %i", 41);
@@ -128,8 +124,6 @@ set_valve(struct scpi_parser_context* context, struct scpi_token* command)
     
     scpi_queue_error(&ctx, error);
   }
-
-  scpi_free_tokens(command);
 
   return resp;
 }
