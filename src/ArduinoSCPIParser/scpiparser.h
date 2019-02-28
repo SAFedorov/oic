@@ -47,6 +47,12 @@ typedef enum scpi_command_location
 	SCPI_CL_CHILD
 } scpi_command_location_t;
 
+typedef enum scpi_token_type
+{
+	SCPI_CT_NAME,
+	SCPI_CT_ARG
+} scpi_token_type_t;
+
 struct scpi_token;
 struct scpi_parser_context;
 struct scpi_command;
@@ -57,7 +63,7 @@ typedef struct scpi_response*(*command_callback_t)(struct scpi_parser_context*,s
 
 struct scpi_token
 {
-	unsigned char		type;
+	scpi_token_type_t	type;
 	
 	char*				value;
 	size_t				length;

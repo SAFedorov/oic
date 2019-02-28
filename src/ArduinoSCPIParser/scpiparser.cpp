@@ -145,7 +145,7 @@ scpi_parse_string(char* str, size_t length)
 			}
 			
 			new_tail = (struct scpi_token*)malloc(sizeof(struct scpi_token));
-			new_tail->type = 0;
+			new_tail->type = SCPI_CT_NAME;
 			new_tail->value = str+token_start;
 			new_tail->length = token_length;
 			new_tail->next = NULL;
@@ -180,7 +180,7 @@ scpi_parse_string(char* str, size_t length)
 		if(str[i] == ',' || i == length-1)
 		{
 			new_tail = (struct scpi_token*)malloc(sizeof(*new_tail));
-			new_tail->type = 1;
+			new_tail->type = SCPI_CT_ARG;
 			new_tail->value = str+token_start;
 			new_tail->length = i-token_start;
 			new_tail->next = NULL;
@@ -261,7 +261,7 @@ scpi_find_command(struct scpi_parser_context* ctx,
 	current_command = root;
 
 	
-	while(current_token != NULL && current_token->type == 0)
+	while(current_token != NULL && current_token->type == SCPI_CT_NAME)
 	{
 	
 		int found_token = 0;
@@ -276,7 +276,7 @@ scpi_find_command(struct scpi_parser_context* ctx,
 				/* We have found the token. */
 				current_token = current_token->next;
 				
-				if(current_token == NULL || current_token->type != 0)
+				if(current_token == NULL || current_token->type != SCPI_CT_NAME)
 				{
 					return current_command;
 				}

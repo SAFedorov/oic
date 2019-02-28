@@ -26,10 +26,13 @@ void setup()
   * 
   *  *IDN?          -> Identify
   *  :PRESsure?     -> read pressure
+  *  :VALVe         -> set valve status 0/1
   */
-  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "*IDN?", 5, "*IDN?", 5, identify);
+  scpi_register_command(ctx.command_tree, SCPI_CL_SAMELEVEL, "*IDN?", 5, "*IDN?", 5, &identify);
 
-  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "PRESSURE?", 9, "PRES?", 5, get_pressure);
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "PRESSURE?", 9, "PRES?", 5, &get_pressure);
+
+  scpi_register_command(ctx.command_tree, SCPI_CL_CHILD, "VALVE", 5, "VALV", 4, &set_valve);
 
   Serial1.setTimeout(COM_TIMEOUT);
   Serial1.begin(COM_BAUD_RATE);
@@ -120,5 +123,45 @@ get_pressure(struct scpi_parser_context* context, struct scpi_token* command)
   resp = get_empty_response(20);
   resp->length = sprintf(resp->str, "Pressure = %i", 41);
   
+  return resp;
+}
+
+/*
+ * Respond to :VALVE
+ */
+struct scpi_response* 
+set_valve(struct scpi_parser_context* context, struct scpi_token* command)
+{
+  struct scpi_response* resp;
+  struct scpi_token* arg;
+  struct scpi_numeric out_numeric;
+  
+  arg = command;
+  while(arg != NULL && arg->type != SCPI_CT_ARG)
+  {
+    arg = arg->next;
+  }
+  
+  resp = get_empty_response(20);
+  
+  if(arg != NULL)
+  {
+    out_numeric = scpi_parse_numeric(arg->value, arg->length, 0, 0, 1);
+    resp->length=sprintf(resp->str, "numeric=%i", (int)out_numeric.value);
+  }
+  else
+  {
+    scpi_error error;
+    
+    resp->length=sprintf(resp->str, "%s", "no numeric");
+    error.id = -1;
+    error.description = (char*)malloc(29*sizeof(char));
+    error.length = sprintf(error.description, "%s", "Command invalid: no numeric");
+    
+    scpi_queue_error(&ctx, error);
+  }
+
+  scpi_free_tokens(command);
+
   return resp;
 }
