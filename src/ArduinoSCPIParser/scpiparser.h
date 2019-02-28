@@ -60,6 +60,7 @@ struct scpi_error;
 struct scpi_response;
 
 typedef struct scpi_response*(*command_callback_t)(struct scpi_parser_context*,struct scpi_token*);
+typedef void(*commf_t)(char*, int);
 
 struct scpi_token
 {
@@ -189,7 +190,6 @@ scpi_register_command(struct scpi_command* parent, scpi_command_location_t locat
 struct scpi_command*
 scpi_find_command(struct scpi_parser_context* ctx,
 					struct scpi_token* parsed_string);
-
 					
 /**
  * Execute a single SCPI command given as string.
@@ -203,17 +203,19 @@ scpi_find_command(struct scpi_parser_context* ctx,
 struct scpi_response*
 scpi_execute_command(struct scpi_parser_context* ctx, char* command_string, size_t length);
 
-
 /**
- * Execute a set of SCPI commands given as string.
+ * Execute a set of SCPI commands given as string and communicate the responses.
  *
  * @param ctx				The SCPI parser context.
  * @param command_string	String, containing commands separated by ';'.
  * @param length			The length of the string.
+ * @param commf				Communication function.
+ * @param terminator		Terminator for the response string.
  *
  */
-struct scpi_response*
-scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length);
+void
+scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t length, 
+				commf_t commf, char terminator);
 
 /**
  * Allocate an empty response structure.
