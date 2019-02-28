@@ -42,10 +42,6 @@ void loop()
 {
   char line_buffer[COM_BUFF_SIZE];
   unsigned char read_length;
-  struct scpi_response* response;
-  struct scpi_response* tmp_response;
-
-  int resp_cnt;
 
   while(1)
   {
