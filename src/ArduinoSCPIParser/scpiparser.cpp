@@ -383,7 +383,7 @@ scpi_execute(struct scpi_parser_context* ctx, char* command_string, size_t lengt
 	{
 		if(command_string[i] == ';' || i == length-1)
 		{
-			if(i == length-1)
+			if(i == length-1 && command_string[i] != ';')
 			{
 				/*including the current character*/
 				cmd_length = i-start_ind+1;
